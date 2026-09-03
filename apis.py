@@ -8,7 +8,7 @@ app = Flask(__name__)
 def api():
 
     # Read data from backend JSON file
-    with open("data.json", "r") as file:
+    with open("app.json", "r") as file:
         data = json.load(file)
 
     # Return data as JSON

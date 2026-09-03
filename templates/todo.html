@@ -1,76 +1,197 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do Page</title>
 </head>
+
 <body>
 
     <h1>To-Do Item</h1>
 
     <form id="todoForm">
 
-        <label>Item Name:</label>
-        <input type="text" id="itemName" required>
+        <!-- Item Name -->
+        <label for="itemName">Item Name:</label>
+        <input
+            type="text"
+            id="itemName"
+            name="itemName"
+            required
+        >
 
         <br><br>
 
-        <lable>Items Id:</lable>
-        <input type="text" name="Item_Id" required>
+
+        <!-- Item ID -->
+        <label for="itemId">Item ID:</label>
+        <input
+            type="text"
+            id="itemId"
+            name="itemId"
+            required
+        >
 
         <br><br>
 
-        <lable>Item UUID:</lable>
-        <input type="text" name="Item_Id" required>
-        
-        <br><br>
 
-        <lable>Item Hash:</lable>
-        <input type="text" name="Hash_Id" required>
-        
-        <br><br>
-
-        <label>Item Description:</label>
-        <textarea name="itemDescription" required></textarea>
+        <!-- Item UUID -->
+        <label for="itemUuid">Item UUID:</label>
+        <input
+            type="text"
+            id="itemUuid"
+            name="itemUuid"
+            required
+        >
 
         <br><br>
 
-        <button type="submit">Submit</button>
+
+        <!-- Item Hash -->
+        <label for="itemHash">Item Hash:</label>
+        <input
+            type="text"
+            id="itemHash"
+            name="itemHash"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- Item Description -->
+        <label for="itemDescription">Item Description:</label>
+        <textarea
+            id="itemDescription"
+            name="itemDescription"
+            required
+        ></textarea>
+
+        <br><br>
+
+
+        <!-- Submit -->
+        <button type="submit">
+            Submit
+        </button>
 
     </form>
 
+
+    <!-- Message -->
     <p id="message"></p>
 
+
     <script>
-        document.getElementById("todoForm").addEventListener("submit", async function(event) {
 
-            event.preventDefault();
+        document
+            .getElementById("todoForm")
+            .addEventListener("submit", async function(event) {
 
-            const itemName = document.getElementById("itemName").value;
-            const itemDescription = document.getElementById("itemDescription").value;
+                // Stop normal form submission
+                event.preventDefault();
 
-            try {
-                const response = await fetch("http://127.0.0.1:5000/submittodoitem", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        itemName: itemName,
-                        itemDescription: itemDescription
-                    })
-                });
 
-                const result = await response.json();
+                // Get values
+                const itemName =
+                    document.getElementById("itemName").value.trim();
 
-                document.getElementById("message").innerText = result.message;
+                const itemId =
+                    document.getElementById("itemId").value.trim();
 
-            } catch (error) {
-                document.getElementById("message").innerText =
-                    "Error connecting to Flask server";
-                console.error(error);
-            }
-        });
+                const itemUuid =
+                    document.getElementById("itemUuid").value.trim();
+
+                const itemHash =
+                    document.getElementById("itemHash").value.trim();
+
+                const itemDescription =
+                    document.getElementById("itemDescription").value.trim();
+
+
+                // Message element
+                const message =
+                    document.getElementById("message");
+
+
+                // Show submitting message
+                message.innerText = "Submitting...";
+
+
+                try {
+
+                    // Send data to Flask
+                    const response = await fetch("/submittodoitem", {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            itemName: itemName,
+
+                            itemId: itemId,
+
+                            itemUuid: itemUuid,
+
+                            itemHash: itemHash,
+
+                            itemDescription: itemDescription
+
+                        })
+
+                    });
+
+
+                    // Convert response to JSON
+                    const result = await response.json();
+
+
+                    // Check response
+                    if (response.ok) {
+
+                        message.innerText =
+                            result.message;
+
+                        // Clear form
+                        document
+                            .getElementById("todoForm")
+                            .reset();
+
+                        console.log(
+                            "MongoDB ID:",
+                            result.id
+                        );
+
+                    } else {
+
+                        message.innerText =
+                            result.error ||
+                            "Something went wrong.";
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Error:",
+                        error
+                    );
+
+                    message.innerText =
+                        "Error connecting to Flask server.";
+
+                }
+
+            });
+
     </script>
 
 </body>
+
 </html>

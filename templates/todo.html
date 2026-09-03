@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do Page</title>
+</head>
+<body>
+
+    <h1>To-Do Item</h1>
+
+    <form id="todoForm">
+
+        <label>Item Name:</label>
+        <input type="text" id="itemName" required>
+
+        <br><br>
+
+        <lable>Item Id:</lable>
+        <input type="text" name="Item_Id" required>
+
+        <br><br>
+
+        <label>Item Description:</label>
+        <textarea name="itemDescription" required></textarea>
+
+        <br><br>
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+    <p id="message"></p>
+
+    <script>
+        document.getElementById("todoForm").addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const itemName = document.getElementById("itemName").value;
+            const itemDescription = document.getElementById("itemDescription").value;
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/submittodoitem", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        itemName: itemName,
+                        itemDescription: itemDescription
+                    })
+                });
+
+                const result = await response.json();
+
+                document.getElementById("message").innerText = result.message;
+
+            } catch (error) {
+                document.getElementById("message").innerText =
+                    "Error connecting to Flask server";
+                console.error(error);
+            }
+        });
+    </script>
+
+</body>
+</html>

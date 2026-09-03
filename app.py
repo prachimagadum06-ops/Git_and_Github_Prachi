@@ -44,7 +44,7 @@ def todo():
 @app.route("/api", methods=["GET"])
 def api():
     try:
-        with open("data.json", "r") as file:
+        with open("apps.json", "r") as file:
             data = json.load(file)
 
         return jsonify(data)
